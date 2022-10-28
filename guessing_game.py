@@ -39,19 +39,19 @@ def guess_game():
     global RETRIES, NUM_RANGE, CHOICE, SELECT
     answer = new_answer.get()
     try:
-        if len(NUM_RANGE) > 2:
+        if len(NUM_RANGE) > 3:
             if answer == "y" and RETRIES % 2 == 0:
-                NUM_RANGE = range(CHOICE, NUM_RANGE[-1]+1)
+                NUM_RANGE = range(CHOICE+1, NUM_RANGE[-1]+1)
                 choice = random.choices(NUM_RANGE[1:])[0]
-                result = f"It´s your number lesser as {choice}. (Answer only y or n)"
+                result = f"It´s your number lesser as {choice}? (Answer only y or n)"
                 update_result(result)
                 new_answer.delete(0,"end")
                 CHOICE = choice
 
             elif answer == "n" and RETRIES % 2 == 0:
-                NUM_RANGE = range(NUM_RANGE[0], CHOICE)
+                NUM_RANGE = range(NUM_RANGE[0], CHOICE+1)
                 choice = random.choices(NUM_RANGE[1:])[0]
-                result = f"It´s your number lesser as {choice}. (Answer only y or n)"
+                result = f"It´s your number lesser as {choice}? (Answer only y or n)"
                 update_result(result)
                 new_answer.delete(0,"end")
                 CHOICE = choice
@@ -59,7 +59,7 @@ def guess_game():
             elif answer == "y" and RETRIES % 2 != 0:
                 NUM_RANGE = range(NUM_RANGE[0], CHOICE)      
                 choice = random.choices(NUM_RANGE[:-1])[0]
-                result = f"It´s your number bigger as {choice}. (Answer only y or n)"
+                result = f"It´s your number bigger as {choice}? (Answer only y or n)"
                 update_result(result)
                 new_answer.delete(0,"end")
                 CHOICE = choice
@@ -67,12 +67,47 @@ def guess_game():
             elif answer == "n" and RETRIES % 2 != 0:
                 NUM_RANGE = range(CHOICE, NUM_RANGE[-1]+1)
                 choice = random.choices(NUM_RANGE[:-1])[0]
-                result = f"It´s your number bigger as {choice}. (Answer only y or n)"
+                result = f"It´s your number bigger as {choice}? (Answer only y or n)"
                 update_result(result)
                 new_answer.delete(0,"end")
                 CHOICE = choice
 
         final_choice = random.choices(NUM_RANGE, k=2)   
+        if len(NUM_RANGE) == 3 and RETRIES % 2 != 0 and (answer == "y" or answer == "n")  and SELECT == False:
+            result = f"It´s your number bigger as {NUM_RANGE[1]}? (Answer only y or n)"
+            update_result(result)
+            new_answer.delete(0,"end")
+
+            if answer == "y" and SELECT == True:
+                result = f"Oh, my dear your number is {NUM_RANGE[-1]}. I WON."
+                update_result(result)
+                new_answer.delete(0,"end")
+                new_answer.place_forget()
+                guess_button.place_forget()
+                SELECT = True
+            if answer == "n" and SELECT == True:
+                NUM_RANGE == NUM_RANGE[:-1]
+                new_answer.delete(0,"end")
+                SELECT == False
+                new_answer.delete(0,"end")
+
+        if len(NUM_RANGE) == 3 and RETRIES % 2 == 0 and (answer == "y" or answer == "n") and SELECT == False:
+            result = f"It´s your number lesser as {NUM_RANGE[1]}? (Answer only y or n)"
+            update_result(result)
+            new_answer.delete(0,"end")
+
+            if answer == "n" and SELECT == True:
+                result = f"Oh, my dear your number is {NUM_RANGE[0]}. I WON."
+                update_result(result)
+                new_answer.place_forget()
+                guess_button.place_forget()
+                SELECT = True
+            if answer == "y" and SELECT == True:
+                NUM_RANGE == NUM_RANGE[1:]
+                new_answer.delete(0,"end")
+                SELECT == False
+
+            
         if len(NUM_RANGE) == 2 and (answer == "y" or answer == "n"):
             result = f"Your number is {final_choice[0]}?"
             update_result(result)
@@ -99,8 +134,8 @@ def guess_game():
         new_answer.place_forget()
         guess_button.place_forget()
 
-
-
+    print(NUM_RANGE)
+    print(SELECT)
     RETRIES += 1
     
     
